@@ -194,7 +194,8 @@ showUTM utm = concat
     -- [ showStats utm.stats 
     -- , "\n"
     -- ] ++
-    [ concat [ lefts'
+    [ concat [ printf "% 6d: " utm.stats.cntr
+             , lefts'
              , showCell tp.thead
              , rights'
              ]
@@ -213,8 +214,8 @@ dispLen = 60
 
 showCursor :: Int -> String
 showCursor pos = if pos < 0
-    then take barlen (drop (abs pos) bar)
-    else take barlen (drop (barlen - pos) bar)
+    then replicate 8 ' ' ++ take barlen (drop (abs pos) bar)
+    else replicate 8 ' ' ++ take barlen (drop (barlen - pos) bar)
     where
         bar = cycle $ replicate dispLen ' ' ++ "^" ++ replicate dispLen ' '
         barlen = 2 * dispLen + 1
