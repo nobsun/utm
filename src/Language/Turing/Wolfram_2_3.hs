@@ -20,6 +20,7 @@ import Data.List
 import Data.Map ( Map )
 import Data.Map qualified as M
 import Text.Printf
+import Debug.Trace
 
 --
 -- ## データタイプ
@@ -96,6 +97,7 @@ move d t = case d of
 data UTM
     = UTM 
     { ctrl  :: [String]
+    , fini  :: Maybe String
     , stats :: Stats
     , inner :: Q
     , tape  :: Tape
@@ -130,7 +132,8 @@ setControl :: [String] -> (UTM -> UTM)
 setControl ctrl utm = utm { ctrl = ctrl }
 
 initUTM :: Tape -> UTM
-initUTM tape = UTM { ctrl  = [], stats = initStats
+initUTM tape = UTM { ctrl  = [], fini = Nothing
+                   , stats = initStats
                    , inner = A, tape = tape
                    }
 initTape :: Tape
@@ -152,7 +155,14 @@ eval m = m : ms where
 -- ### 終了判定
 --
 isFinal :: UTM -> Bool
-isFinal utm = abs utm.tape.toffset >= dispLen
+isFinal utm = case utm.fini of
+    Nothing  -> False
+    Just msg -> trace msg' True
+        where
+            msg' = concat 
+                 [ "Stopped! : ", msg, "\n"
+                 , showStats utm.stats
+                 ]
 --
 -- ### 統計情報の更新
 --
@@ -169,20 +179,24 @@ doAdmin utm = utm
 -- ### ステップ実行
 --
 exec :: UTM -> UTM
-exec utm = case map toLower $ utm.ctrl !! 0 of
-    ""  -> utm' { ctrl = drop 1 utm.ctrl }
-    "c" -> utm' { ctrl = repeat "" }
-    s | all isDigit s -> utm' { ctrl = replicate (read s) "" ++ drop 1 utm.ctrl }
-      | otherwise     -> utm' { ctrl = drop 1 utm.ctrl }
-    where
-        utm' = case δ M.!? (q,h) of
-            Nothing        -> error "exec: no rule match"
-            Just (q',h',d) -> utm { inner = q'
-                                  , tape = move d (write h' utm.tape) 
-                                  }
-            where
-                q = utm.inner
-                h = utm.tape.thead
+exec = control . proc
+
+proc :: UTM -> UTM
+proc utm = case δ M.!? (utm.inner, utm.tape.thead) of
+    Nothing      -> utm { fini = Just "no rule match" }
+    Just (q,h,d) -> utm { inner = q
+                        , tape  = move d (write h utm.tape)
+                        }
+
+control :: UTM -> UTM
+control utm = case abs utm.tape.toffset of
+    abspos 
+        | abspos >= dispLen -> utm { fini = Just "head at a end of display range" }
+        | otherwise ->  case map toLower $ utm.ctrl !! 0 of
+        ""  -> utm { ctrl = drop 1 utm.ctrl }
+        "c" -> utm { ctrl = repeat "" }
+        s | all isDigit s -> utm { ctrl = replicate (read s) "" ++ drop 1 utm.ctrl }
+          | otherwise     -> utm { ctrl = drop 1 utm.ctrl }
 --
 -- ### トレース表示器
 --
@@ -191,9 +205,6 @@ showTrace = map showUTM
 
 showUTM :: UTM -> String
 showUTM utm = concat
-    -- [ showStats utm.stats 
-    -- , "\n"
-    -- ] ++
     [ concat [ printf "% 6d: " utm.stats.cntr
              , lefts'
              , showCell tp.thead
@@ -236,7 +247,7 @@ showCell s = conv s ++ " \ESC[0m"
 
 showStats :: Stats -> String
 showStats stats 
-    = printf "steps: % 3d, left most % 3d, right most % 3d"
+    = printf "steps: %d, left most %d, right most %d"
              stats.cntr
              stats.lbnd
              stats.rbnd
