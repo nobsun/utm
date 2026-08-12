@@ -1,0 +1,102 @@
+name:                utm
+version:             0.1.0
+github:              nobsun/utm
+license:             BSD3
+author:              Nobuo Yamashita
+maintainer:          nobsun@gmail.com
+copyright:           © 2026, Nobuo Yamashita
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Experiment
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/nobsun/utm#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- unicode-show
+- bytestring
+- utf8-string
+- time
+- hspec
+- main-tester
+- doctest
+- aeson
+- gloss
+- brick
+- array
+- containers
+- constraints
+- mtl
+- free
+- extra
+- recursion-schemes
+- vector
+- directory
+- filepath
+- split
+- haskeline
+- text
+- prettyprinter
+- random
+- stm
+
+language: GHC2024
+
+default-extensions:
+- ImplicitParams
+- ImportQualifiedPost
+- LexicalNegation
+- MultiWayIf
+- NPlusKPatterns
+- OverloadedStrings
+- DataKinds
+- PolyKinds
+- NoStarIsType
+- TypeFamilyDependencies
+- UndecidableInstances
+
+ghc-options:
+- -Wall
+- -Wno-unticked-promoted-constructors
+- -Wno-unused-imports
+- -Wno-unused-top-binds
+- -Wno-orphans
+- -Wno-x-partial
+
+library:
+  source-dirs: src
+
+executables:
+  utm-2-3:
+    main:               Main.hs
+    source-dirs:        app/utm-2-3
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - utm
+
+tests:
+  utm-test:
+    main:                spec.hs
+    source-dirs:         test
+    dependencies:
+    - utm
+    - hspec
+    - main-tester
+
+  utm-doctest:
+    main:                doctests.hs
+    source-dirs:         test
+    dependencies:
+    - utm
+    - doctest

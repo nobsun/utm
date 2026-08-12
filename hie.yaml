@@ -1,0 +1,16 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "utm:lib"
+
+    - path: "./app/utm-2-3/Main.hs"
+      component: "utm:exe:utm-2-3"
+
+    - path: "./app/utm-2-3/Paths_utm.hs"
+      component: "utm:exe:utm-2-3"
+
+    - path: "./test"
+      component: "utm:test:utm-doctest"
+
+    - path: "./test"
+      component: "utm:test:utm-test"

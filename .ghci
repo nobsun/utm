@@ -1,0 +1,6 @@
+import Text.Show.Unicode
+:set -interactive-print=uprint
+:set -XGHC2024 -XMultiWayIf -XNPlusKPatterns -XOverloadedStrings -XLexicalNegation
+:set -XDataKinds -XPolyKinds -XNoStarIsType -XTypeFamilyDependencies -XUndecidableInstances
+:set -XImplicitParams -XNoFieldSelectors -XDuplicateRecordFields -XOverloadedRecordDot
+:set editor code --wait
