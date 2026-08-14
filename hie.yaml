@@ -3,6 +3,12 @@ cradle:
     - path: "./src"
       component: "utm:lib"
 
+    - path: "./app/tagsys/Main.hs"
+      component: "utm:exe:tagsys"
+
+    - path: "./app/tagsys/Paths_utm.hs"
+      component: "utm:exe:tagsys"
+
     - path: "./app/utm-2-3/Main.hs"
       component: "utm:exe:utm-2-3"
 

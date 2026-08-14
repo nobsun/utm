@@ -75,6 +75,14 @@ library:
   source-dirs: src
 
 executables:
+  tagsys:
+    main:               Main.hs
+    source-dirs:        app/tagsys
+    ghc-options:
+    - -rtsopts
+    dependencies:
+    - utm
+
   utm-2-3:
     main:               Main.hs
     source-dirs:        app/utm-2-3
