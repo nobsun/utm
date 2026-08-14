@@ -1,5 +1,4 @@
 #!/bin/bash
 
 source .curname
-./building
-stack exec -- $CURRENT_STACK_EXE_ENTRY
+./building && stack exec -- $CURRENT_STACK_EXE_ENTRY

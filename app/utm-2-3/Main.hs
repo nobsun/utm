@@ -13,10 +13,12 @@ module Main
     ) where
 
 import Interact
+import Language.Turing.TM
 import Language.Turing.Wolfram_2_3
 
 main :: IO ()
-main = interact (unlines . usage . run initTape . lines)
+main = let { ?terminator = terminator; ?showCell = showCell }
+       in  interact (unlines . usage . run program initTape . lines)
 
 usage :: [String] -> [String]
 usage = (msg :) where
